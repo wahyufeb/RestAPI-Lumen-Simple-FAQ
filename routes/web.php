@@ -25,6 +25,7 @@ $router->group(["prefix" => "list-faq"], function() use ($router){
 });
 
 $router->group(["prefix" => "auth"], function() use ($router){
-  $router->post("/login", "AuthenticationController@login");
-  $router->post("/registration", "AuthenticationController@registration");
+  $router->post("/login", "AdminController@login");
+  $router->post("/registration", "AdminController@registration");
+  $router->get("/admin/data", "AdminCOntroller@adminData");
 });

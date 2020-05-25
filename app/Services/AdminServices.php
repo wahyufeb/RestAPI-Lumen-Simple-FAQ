@@ -5,6 +5,7 @@ namespace App\Services;
 use App\FaqDAO;
 use App\AdminDAO;
 use App\Services\ResponsePresentationLayer;
+use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 use Firebase\JWT\ExpiredException;
@@ -42,7 +43,7 @@ class AdminServices{
       $adminData = $this->modelAdmin->where('username', $username)->first();
       // cek jika username tidak ada
       if(!$adminData){
-        $response = new ResponsePresentationLayer(400, "Username tidak ditemukan", [], true);
+        $response = new ResponsePresentationLayer(401, "Username tidak ditemukan", [], true);
         return $response->getResponse();
       }
       if(Hash::check($password, $adminData->password)){
@@ -51,9 +52,10 @@ class AdminServices{
         $adminData->token = $token;
         $adminData->save();
 
-        $response = new ResponsePresentationLayer(201, "Username dan password benar", $adminData, false);
+        $response = new ResponsePresentationLayer(200, "Username dan password benar", $adminData, false);
       }else{
-        $response = new ResponsePresentationLayer(500, "Password Anda salah", [], true);
+        $response = new ResponsePresentationLayer(401, "Password Anda salah", [], true);
+        // $response = new ResponsePresentationLayer(500, "Password yang anda masukan salah", [], true);
       }
     } catch (\Exception $e) {
       $response = new ResponsePresentationLayer(500, "Terjadi kesalahan pada server", [], $e);
@@ -138,10 +140,17 @@ class AdminServices{
     }
     return $response->getResponse();
   }
-  
 
-
-
+  public function aksiAmbilDataAdmin($token){
+    try {
+      $dataAdmin = $this->modelAdmin->where("token", $token)->get();
+      $response = new ResponsePresentationLayer(200, "Data admin berhasil ditemukan", $dataAdmin, false);
+    } catch (\Exception $e) {
+      $errors[] = $e->getMessage();
+      $response = new ResponsePresentationLayer(500, "Terjadi kesalahan pada server", [], $errors);
+    }
+    return $response->getResponse();
+  }
 
 
 }

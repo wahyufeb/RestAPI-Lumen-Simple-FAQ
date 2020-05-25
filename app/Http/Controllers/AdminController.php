@@ -16,7 +16,7 @@ class AdminController extends Controller
      * @return void
      */
     public function __construct(){
-      $this->middleware("jwt");
+      $this->middleware("jwt", ["except" => ["registration", "login",]]);
       // instance services
       $this->adminServices = new AdminServices();
       $this->faqServices = new FaqServices();
@@ -88,5 +88,11 @@ class AdminController extends Controller
             "jawaban" => "required"
         ]);
         return $this->adminServices->aksiUpdateFaq($request, $id);
+    }
+
+    // Get Admin
+    public function adminData(Request $request){
+      $tokenJwt = $request->auth->token;
+      return $this->adminServices->aksiAmbilDataAdmin($tokenJwt);
     }
 }

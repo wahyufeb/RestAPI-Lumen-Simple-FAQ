@@ -17,6 +17,7 @@ class CreateQnaTable extends Migration
             $table->id();
             $table->text("pertanyaan");
             $table->text("jawaban")->nullable();
+            $table->boolean('displayed')->default(true);
             $table->timestampsTz(0);
             $table->softDeletesTz('deleted_at', 0);
         });

@@ -15,7 +15,6 @@ class FaqServices {
   public function aksiMenampilkanSemuaFaq(){
     try {
       $data = $this->modelFaq->get();
-
       if(count($data) == 0){
         $response = new ResponsePresentationLayer(404, "Data tidak ditemukan", [], true);
         return $response->getResponse();
@@ -49,9 +48,10 @@ class FaqServices {
     try {
         // tambah data faq ke database
         $storeData = $this->modelFaq->create([
-          "pertanyaan" => $request->input("pertanyaan")
+          "pertanyaan" => $request->input("pertanyaan"),
         ]);
-        $response = new ResponsePresentationLayer(201, "Sukses Menambah FAQ", $storeData, $request->auth);
+        $storeData["displayed"] = false;
+        $response = new ResponsePresentationLayer(201, "Sukses Menambah FAQ", $storeData, false);
     } catch (\Exception $e) {
         $errors[] = $e->getMessage();
         $response = new ResponsePresentationLayer(500, "Terjadi kesalahan pada server", [], $errors);
